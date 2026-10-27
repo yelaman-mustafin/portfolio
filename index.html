@@ -671,10 +671,16 @@ const PROFILE = {
    funnel — сетка цифр (только для большой карточки).
    img — картинка в подробном описании.
    subs — что внутри (раскрывается в описании); kind — как назвать: tasks, brands, clients, products, projects, cases. */
+/* незаполненные места: вместо «[...]» пишем, что скоро будет; пустые пункты списков не показываем */
+const SOON = "Подробности скоро будут";
+const onlyPh = v => typeof v === "string" && /^\s*\[[^\]]+\]\s*$/.test(v);
+const soon = v => onlyPh(v) ? SOON : (v || "").replace(/\s*\[[^\]]+\]/g, "");
+const noPh = a => (a || []).filter(x => !onlyPh(x));
+const yrOk = v => onlyPh(v) ? "" : (v || "");
 /* личные оценки проектов («Моя оценка») пока скрыты; вернуть — поставить true */
 const SHOW_VERDICT = false;
-const P = (id, mark, title, short, o = {}) => ({ id, mark, title, short, yr: o.yr || "", tone: o.tone || "", tones: o.tones || [], verdict: SHOW_VERDICT && o.verdict || null, acc: o.acc || "", hover: o.hover || "", kv: o.kv || [], funnel: o.funnel || [], img: o.img || "", facts: o.facts || {}, task: o.task || "", did: o.did || [], result: o.result || [], tools: o.tools || [], link: o.link, note: o.note || "", subs: o.subs || [], total: o.total, kind: o.kind || "tasks", logos: o.logos || null });
-const S = (title, short, o = {}) => ({ title, short, tone: o.tone || "", small: !!o.small, yr: o.yr || "", img: o.img || "", kv: o.kv || [], tags: o.tags || [], did: o.did || [], result: o.result || [], link: o.link });
+const P = (id, mark, title, short, o = {}) => ({ id, mark, title, short: soon(short), yr: yrOk(o.yr), tone: o.tone || "", tones: o.tones || [], verdict: SHOW_VERDICT && o.verdict || null, acc: o.acc || "", hover: o.hover || "", kv: o.kv || [], funnel: o.funnel || [], img: o.img || "", facts: o.facts || {}, task: onlyPh(o.task) ? "" : (o.task || ""), did: noPh(o.did), result: noPh(o.result), tools: o.tools || [], link: o.link, note: o.note || "", subs: o.subs || [], total: o.total, kind: o.kind || "tasks", logos: o.logos || null });
+const S = (title, short, o = {}) => ({ title, short: short && soon(short), tone: o.tone || "", small: !!o.small, yr: yrOk(o.yr), img: o.img || "", kv: o.kv || [], tags: o.tags || [], did: noPh(o.did), result: noPh(o.result), link: o.link });
 
 const EXPERIENCE = [
   {
@@ -703,10 +709,7 @@ const EXPERIENCE = [
             result: ["Конверсия воронки 15% → 24%", "До 9 тыс. абонентов в месяц", "Стоимость привлечения в 3 раза ниже"] }),
           S("Family", "[Что делал по тарифу Family]", { did: ["[Задачи]"] }),
           S("Kcell/activ shop", "[Что делал по интернет-магазину]", { did: ["[Задачи]"] }),
-          S("OGO Card", "Разметка событий в приложении activ для рекламного запуска карты.", {
-            tags: ["Firebase", "AppsFlyer"],
-            did: ["Написал ТЗ на разметку событий для Firebase и AppsFlyer, чтобы путь от рекламы до оформления карты считался в аналитике", "Передал разработчикам и сопровождаю внедрение"],
-            result: ["[Что дала разметка после запуска]"] }),
+          S("OGO Card", "[скоро]"),
           S("Activ Дома", "[Что делал по домашнему интернету]", { did: ["[Задачи]"] }),
           S("my-activ club: веб-аналитика", "Откуда приходит трафик и как честно считать вклад CRM-кампаний.", {
             tags: ["GA4", "UTM", "Excel"],
@@ -806,15 +809,15 @@ const EXPERIENCE = [
     highlights: [
       "№1 банк по росту депозитов в 2024 году: +60% за год при среднем по сектору 23,8%",
       "Стоимость установки приложения снижена с ~$0,9 до ~$0,3",
-      "Десятки тысяч лидов из цифровых и офлайн-каналов",
+      "30 000+ лидов из цифровых и офлайн-каналов",
       "Выросли показатели Brand Health: узнаваемость, доверие, NPS"
     ],
     groups: [{ name: "Проекты", items: [
       P("rbk", "RBK", "Bank RBK", "Установки приложения дешевле в 3 раза и лидогенерация для МСБ: заявки на расчётные счета ИП и ТОО с верифицированным БИН.", { verdict: { mark: "success", text: "Установка приложения подешевела с ~$0,9 до ~$0,3, а банк стал №1 по росту депозитов в 2024 году." },
         yr: "2023 — 2024", tone: "rbk",
-        kv: [["$0,9 → $0,3", "стоимость установки"], ["10 000+", "установок"], ["+60%", "депозиты, №1 в 2024"]],
+        kv: [["$0,9 → $0,3", "стоимость установки"], ["30 000+", "лидов"], ["10 000+", "установок"], ["+60%", "депозиты, №1 в 2024"]],
         facts: { "Рост депозитов 2024": "+60%, №1 в секторе", "Стоимость установки": "$0,9 → $0,3", "Каналы": "Digital, OOH, TV" },
-        result: ["№1 банк по росту депозитов в 2024: +60% при 23,8% по сектору", "Стоимость установки приложения снижена с ~$0,9 до ~$0,3, 10 000+ установок", "Десятки тысяч лидов из цифровых и офлайн-каналов", "Рост Brand Health: узнаваемость, доверие, NPS"],
+        result: ["№1 банк по росту депозитов в 2024: +60% при 23,8% по сектору", "Стоимость установки приложения снижена с ~$0,9 до ~$0,3, 10 000+ установок", "30 000+ лидов из цифровых и офлайн-каналов", "Рост Brand Health: узнаваемость, доверие, NPS"],
         tools: ["Google Ads", "Meta Ads", "Яндекс Директ", "CPA-сети", "Мобильная аналитика"],
         subs: [
           S("Лидогенерация для МСБ", "Мультиканальный поток заявок на открытие расчётных счетов для ИП и ТОО.", {
@@ -890,10 +893,11 @@ const EXPERIENCE = [
           S("Ballantine's", "[Что делал для бренда]", { tone: "bal", small: true, did: ["[Задачи]"] }),
           S("Olmeca", "[Что делал для бренда]", { tone: "olm", small: true, did: ["[Задачи]"] })
         ] }),
-      P("toyota", "TL", "Toyota / Lexus", "SMM, медийка и контекст, свой контакт-центр в соцсетях, локальный продакшн с 3D.", { verdict: { mark: "success", text: "Скорость ответа в соцсетях сократилась с 2 часов до 7 минут, Toyota набрала 200 тыс.+ подписчиков, а Toyota Kazakhstan попала в рейтинг Forbes." },
+      P("toyota", "TL", "Toyota / Lexus", "Контекстная и медийная реклама в Google, SMM, свой контакт-центр в соцсетях, локальный продакшн с 3D.", { verdict: { mark: "success", text: "Скорость ответа в соцсетях сократилась с 2 часов до 7 минут, Toyota набрала 200 тыс.+ подписчиков, а Toyota Kazakhstan попала в рейтинг Forbes." },
         yr: "2020 — 2022", tone: "metal", tones: ["metal", "silver"], kind: "brands",
-        kv: [["2 ч → 7 мин", "скорость ответа"], ["2,5 млн", "охват в месяц"]],
-        note: "Цифры — результаты проекта агентства за весь период ведения бренда.",
+        kv: [["649 млн", "показов в Google Ads"], ["6,5 млн", "кликов"], ["$0,07", "средняя цена клика"], ["7 800+", "конверсий"], ["2 ч → 7 мин", "скорость ответа"], ["2,5 млн", "охват в месяц"]],
+        facts: { "Google Ads: показы": "649 млн", "Клики и взаимодействия": "6,5 млн", "CTR": "1,01%", "Средняя цена клика": "$0,07", "Рекламный бюджет": "$479 тыс.", "Конверсии": "7 800+", "Цена конверсии": "$61" },
+        note: "Цифры — результаты проекта агентства за весь период ведения бренда. Данные Google Ads — по рекламному кабинету за 2020–2023.",
         subs: [
           S("Toyota", "Новая стратегия вещания и масштабирование продвижения.", {
             tone: "silver",
@@ -1478,7 +1482,8 @@ foldify("pets", "04", "Пет-проекты", "Разработки и серв
   }
 
   /* появление блоков при прокрутке, с лёгкой волной по сетке */
-  document.documentElement.classList.add("anim");
+  /* анимация появления блоков отключена; вернуть — раскомментировать */
+  // document.documentElement.classList.add("anim");
   const targets = [...document.querySelectorAll("#hero > .b, .fold, .sec-h, .filters, #pfGrid > .b-proj, #pfRest, #contacts .b, .stat")];
   const groups = new Map();
   targets.forEach(el => { el.classList.add("rv"); const g = el.parentElement; const n = groups.get(g) || 0; groups.set(g, n + 1); el.style.setProperty("--d", (n % 6) * .06 + "s"); });
